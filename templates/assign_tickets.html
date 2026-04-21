@@ -1,0 +1,55 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="panel">
+
+    <h2>Assign Tickets 👨‍💻</h2>
+    <p class="note">Assign tickets to support team members</p>
+
+    {% if tickets %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Description</th>
+            <th>Assign To</th>
+            <th>Action</th>
+        </tr>
+
+        {% for ticket in tickets %}
+        <tr>
+            <form method="POST">
+
+                <td>#{{ ticket.id }}</td>
+                <td>{{ ticket.user.email }}</td>
+                <td>{{ ticket.description }}</td>
+
+                <td>
+                    <select name="assigned_to">
+                        <option value="">Select Agent</option>
+                        {% for admin in admins %}
+                        <option value="{{ admin.id }}">
+                            {{ admin.email }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+
+                <td>
+                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                    <button type="submit">Assign</button>
+                </td>
+
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <p>No tickets available.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

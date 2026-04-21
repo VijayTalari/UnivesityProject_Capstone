@@ -1,0 +1,53 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="panel">
+
+    <h2>Knowledge Base Management 📚</h2>
+
+    <!-- ADD ARTICLE -->
+    <form method="POST" style="margin-bottom:20px;">
+        <input type="text" name="title" placeholder="Article Title" required>
+
+        <textarea name="content" placeholder="Solution / Description" required></textarea>
+
+        <input type="text" name="category" placeholder="Category (Network / Software)" required>
+
+        <button type="submit">Add Article</button>
+    </form>
+
+    <!-- LIST -->
+    {% if articles %}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for a in articles %}
+        <tr>
+            <td>{{ a.title }}</td>
+            <td>{{ a.category }}</td>
+
+            <td>
+                <a href="/edit-article/{{ a.id }}">
+                    <button>Edit</button>
+                </a>
+
+                <a href="/delete-article/{{ a.id }}">
+                    <button style="background:red;">Delete</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    {% else %}
+        <p>No articles yet.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

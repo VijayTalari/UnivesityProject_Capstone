@@ -1,0 +1,23 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="panel">
+
+    <h2>Edit Article ✏️</h2>
+
+    <form method="POST">
+
+        <input type="text" name="title" value="{{ article.title }}" required>
+
+        <textarea name="content" required>{{ article.content }}</textarea>
+
+        <input type="text" name="category" value="{{ article.category }}" required>
+
+        <button type="submit">Update</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

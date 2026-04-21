@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Smart Helpdesk AI Chat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Container */
+.chat-container {
+    max-width: 750px;
+    margin: 30px auto;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(20px);
+}
+
+/* Header */
+.chat-header {
+    text-align: center;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Chat Box */
+.chat-box {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Message Row */
+.message-row {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+/* Bot */
+.bot-row {
+    justify-content: flex-start;
+}
+
+/* User */
+.user-row {
+    justify-content: flex-end;
+}
+
+/* Avatar */
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin: 0 8px;
+}
+
+/* Message bubble */
+.message {
+    padding: 12px 15px;
+    border-radius: 18px;
+    max-width: 65%;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Bot bubble */
+.bot {
+    background: rgba(255,255,255,0.9);
+    color: #333;
+}
+
+/* User bubble */
+.user {
+    background: #4facfe;
+    color: white;
+}
+
+/* Input area */
+.chat-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.chat-input input {
+    flex: 1;
+    min-width: 0; /* IMPORTANT FIX */
+    padding: 14px 16px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+
+    background: #ffffff;   /* solid color */
+    color: #000;
+
+    display: block;        /* FIX */
+}
+
+.chat-input input::placeholder {
+    color: #666;
+}
+
+.chat-input button {
+    padding: 14px 24px;
+    border-radius: 25px;
+    border: none;
+    background: #4facfe;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+
+    white-space: nowrap;   /* FIX */
+}
+
+.chat-input button:hover {
+    background: #00c6ff;
+}
+
+/* Typing animation */
+.typing {
+    display: flex;
+    gap: 5px;
+}
+
+.typing span {
+    width: 6px;
+    height: 6px;
+    background: #555;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* FIX CHAT INPUT PROPERLY */
+.chat-input {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.chat-input input {
+    flex: 1;              /* take full space */
+    width: auto;          /* override global 100% */
+    padding: 14px 16px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+
+    background: #ffffff;
+    color: #111;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.chat-input button {
+    width: auto;          /* IMPORTANT: override global button 100% */
+    padding: 14px 25px;
+    border-radius: 25px;
+}
+
+@keyframes blink {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
+}
+</style>
+
+</head>
+
+<body>
+
+    
+
+<div class="chat-container">
+
+    <div class="back-btn" onclick="goBack()">
+    ← Back to Dashboard
+    </div>
+```
+<div class="chat-header">
+    🤖 Smart Helpdesk AI
+</div>
+
+<div class="chat-box" id="chatBox">
+
+    {% if chat_history %}
+        {% for chat in chat_history %}
+
+            {% if chat.sender == "user" %}
+                <div class="message-row user-row">
+                    <div class="message user">{{ chat.text }}</div>
+                    <div class="avatar">👤</div>
+                </div>
+            {% else %}
+                <div class="message-row bot-row">
+                    <div class="avatar">🤖</div>
+                    <div class="message bot">{{ chat.text }}</div>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    {% else %}
+        <div class="message-row bot-row">
+            <div class="avatar">🤖</div>
+            <div class="message bot">
+                Hello 👋 I'm your Smart Helpdesk Assistant. How can I help you today?
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+<form method="POST" class="chat-input">
+    <input type="text" name="message" placeholder="Type your message..." required>
+    <button type="submit">Send</button>
+</form>
+```
+
+</div>
+
+<script>
+    const chatBox = document.getElementById("chatBox");
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+
+<script>
+function goBack() {
+    window.location.href = "/user";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="topbar">
+    <h2>Admin Dashboard</h2>
+
+    <div class="top-right">
+
+            <!-- Dark Mode Toggle -->
+        <div onclick="toggleDarkMode()" style="cursor:pointer;">
+            🌙
+        </div>
+
+        <div>{{ email }}</div>
+        <!-- Bell -->
+        <div class="notification-bell" onclick="toggleNotifications(event)">
+            🔔
+            {% if unread_count > 0 %}
+                <span class="badge">{{ unread_count }}</span>
+            {% endif %}
+        </div>
+
+
+        <!-- Dropdown -->
+        <div id="notifBox" class="notif-box">
+            {% for n in notifications %}
+                <div class="notif-item">{{ n.message }}</div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card open">
+        <h3>Open Tickets</h3>
+        <p>{{ open_count }}</p>
+    </div>
+
+    <div class="stat-card progress">
+        <h3>In Progress</h3>
+        <p>{{ progress_count }}</p>
+    </div>
+
+    <div class="stat-card resolved">
+        <h3>Total Resolved</h3>
+        <p>{{ resolved_count }}</p>
+    </div>
+
+    <div class="stat-card critical">
+        <h3>High Priority</h3>
+        <p>{{ high_priority }}</p>
+    </div>
+
+</div>
+
+<div class="charts-container">
+
+    <!-- Row 1 -->
+    <div class="chart-row">
+        <div class="chart-box">
+            <canvas id="ticketChart"></canvas>   <!-- BAR -->
+        </div>
+
+        <div class="chart-box">
+            <canvas id="priorityChart"></canvas> <!-- DOUGHNUT -->
+        </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="chart-row full-width">
+        <div class="chart-box">
+            <canvas id="lineChart"></canvas> <!-- LINE -->
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+function toggleNotifications() {
+    const box = document.getElementById("notifBox");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+// close when clicking outside
+document.addEventListener("click", function(e) {
+    if (!e.target.closest(".top-icons")) {
+        const box = document.getElementById("notifBox");
+        if (box) box.style.display = "none";
+    }
+});
+</script>
+
+<script>
+function toggleNotifications(event) {
+    event.stopPropagation();
+
+    const box = document.getElementById("notifBox");
+
+    box.style.display =
+        box.style.display === "block" ? "none" : "block";
+
+    fetch("/mark-notifications-read");
+
+    const badge = document.querySelector(".badge");
+    if (badge) badge.remove();
+}
+
+document.addEventListener("click", function(e) {
+    if (!e.target.closest(".notification-bell") &&
+        !e.target.closest("#notifBox")) {
+
+        const box = document.getElementById("notifBox");
+        if (box) box.style.display = "none";
+    }
+});
+</script>
+
+<script>
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    // Save preference
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+// Load saved theme
+window.onload = function () {
+    const theme = localStorage.getItem("theme");
+
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('ticketChart');
+
+const openCount = {{ open_count | tojson }};
+const progressCount = {{ progress_count | tojson }};
+const resolvedCount = {{ resolved_count | tojson }};
+
+new Chart(ctx, {
+    type: 'bar',
+    indexAxis: 'y',
+    data: {
+        labels: ['Open', 'In Progress', 'Resolved'],
+        datasets: [{
+            label: 'Tickets',
+            data: [openCount, progressCount, resolvedCount],
+
+            // Softer colors (less clash with cards)
+            backgroundColor: [
+                'rgba(249, 115, 22, 0.6)',   // soft orange
+                'rgba(37, 99, 235, 0.6)',    // soft blue
+                'rgba(22, 163, 74, 0.6)'     // soft green
+            ],
+
+            borderRadius: 10,
+            barThickness: 50
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false   // ❌ remove vertical lines
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                },
+                grid: {
+                    color: '#e5e7eb',  // ✅ light horizontal lines
+                    borderDash: [5, 5] // ✅ dotted grid (modern look)
+                }
+            }
+        }
+    }
+});
+</script>
+
+<script>
+const ctx2 = document.getElementById('lineChart');
+
+new Chart(ctx2, {
+    type: 'line',
+    data: {
+        labels: {{ dates | tojson }},
+        datasets: [{
+            label: 'Tickets per Day',
+            data: {{ counts | tojson }},
+
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            fill: true,
+            tension: 0.4,   // smooth curve
+            pointRadius: 5,
+            pointBackgroundColor: '#2563eb'
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
+
+<script>
+const priorityCtx = document.getElementById('priorityChart');
+
+// Store values safely
+const low = {{ low_count | tojson }};
+const medium = {{ medium_count | tojson }};
+const high = {{ high_count | tojson }};
+
+new Chart(priorityCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Low', 'Medium', 'High'],
+        datasets: [{
+            data: [low, medium, high],
+            backgroundColor: [
+                '#16a34a',  // green
+                '#f59e0b',  // yellow
+                '#dc2626'   // red
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        },
+        cutout: '65%'   // makes it look modern
+    }
+});
+</script>
+
+{% endblock %}

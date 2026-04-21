@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+.main-container { display: flex; }
+
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    background: #1e293b;
+    color: white;
+    padding: 20px;
+    position: fixed;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px;
+    margin-bottom: 10px;
+    color: #cbd5f5;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background: #334155;
+    color: white;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 30px;
+    background: #f1f5f9;
+    min-height: 100vh;
+    width: 100%;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <!-- ADMIN SIDEBAR -->
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+
+        <a href="/admin">🏠 Dashboard</a>
+        <a href="/admin-tickets">📋 Manage Tickets</a>
+        <a href="/knowledge-base">📚 Knowledge Base</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "user_base.html" %}
+
+{% block content %}
+
+<div class="kb-container">
+
+    <!-- HEADER -->
+    <div class="kb-header">
+        <h2>📚 Knowledge Base</h2>
+        <p>Find quick solutions to common issues</p>
+    </div>
+
+    <!-- SEARCH -->
+   <form method="GET" class="kb-search">
+    <input 
+        type="text" 
+        name="search" 
+        placeholder="🔍 Search your issue..."
+        value="{{ query or '' }}"
+    >
+    <button type="submit">Search</button>
+</form>
+
+    <!-- RESULTS -->
+    {% if articles %}
+        <div class="kb-grid">
+            {% for article in articles %}
+                <div class="kb-card">
+                    <div class="kb-card-header">
+                        <h3>{{ article.title }}</h3>
+                        <span class="kb-category">{{ article.category }}</span>
+                    </div>
+
+                    <p class="kb-content">
+                        {{ article.content }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <!-- EMPTY STATE -->
+        <div class="kb-empty">
+            <h3>😕 No solution found</h3>
+            <p>Try different keywords or raise a ticket</p>
+
+            <a href="/raise-ticket" class="raise-btn">
+                ➕ Raise a Ticket
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

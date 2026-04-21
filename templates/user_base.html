@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="layout">
+
+    <div class="sidebar">
+        <h2>Smart Helpdesk</h2>
+
+        <a href="/user"> Back to Dashboard</a>
+        
+    </div>
+
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

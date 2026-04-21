@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Helpdesk Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="login-page">
+
+    <!-- LEFT SECTION -->
+    <div class="login-left">
+        <h1>Smart Helpdesk</h1>
+        <h2>IT support that puts people first</h2>
+        <p>
+            A centralized AI-based ticketing system that enables employees
+            to raise IT issues easily and receive faster resolutions using
+            intelligent automation and chatbots.
+        </p>
+
+        <div class="login-tags">
+            <span>AI-Based</span>
+            <span>Centralized</span>
+            <span>SIH Project</span>
+        </div>
+    </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="login-right">
+        <div class="login-card">
+            <h3>Login to your account</h3>
+            <p class="note">Use your email to continue</p>
+
+            <form method="POST" action="/login">
+
+                <div class="role-select">
+                    <label>
+                        <input type="radio" name="role" value="user" checked>
+                        User
+                    </label>
+                    <label>
+                        <input type="radio" name="role" value="admin">
+                        Admin
+                    </label>
+                </div>
+
+                <input type="email" name="email" placeholder="Email address" required>
+                <input type="password" name="password" placeholder="Password" required>
+
+                <button type="submit">Login</button>
+
+            </form>
+
+            <p style="margin-top:15px;">
+                Don’t have an account?
+                <a href="/signup">Sign Up</a>
+            </p>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <p style="color:red; margin-top:10px;">
+                  {{ messages[0] }}
+                </p>
+              {% endif %}
+            {% endwith %}
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
